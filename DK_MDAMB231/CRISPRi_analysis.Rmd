@@ -1,6 +1,5 @@
 ---
-title: "MDA CRISPRi Analysis"
-author: "Matthew Berginski"
+title: "MDA MB 231 CRISPRi Analysis"
 output: github_document
 ---
 
@@ -13,6 +12,8 @@ library(knitr)
 library(kableExtra)
 library(broom)
 ```
+
+Taking a look at the CRISPRi screen for the dark kinases in MDA MB 231 cells.
 
 # Loading Data
 

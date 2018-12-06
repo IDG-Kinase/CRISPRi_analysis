@@ -1,6 +1,7 @@
-MDA CRISPRi Analysis
+MDA MB 231 CRISPRi Analysis
 ================
-Matthew Berginski
+
+Taking a look at the CRISPRi screen for the dark kinases in MDA MB 231 cells.
 
 Loading Data
 ============
@@ -116,10 +117,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.9394986
+0.9385850
 </td>
 <td style="text-align:right;">
-1.093183
+1.098283
 </td>
 <td style="text-align:right;">
 0.7843456
@@ -130,10 +131,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8102025
+0.8096522
 </td>
 <td style="text-align:right;">
-1.078335
+1.079039
 </td>
 <td style="text-align:right;">
 0.4919590
