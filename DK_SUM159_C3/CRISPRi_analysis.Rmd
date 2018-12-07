@@ -1,5 +1,5 @@
 ---
-title: "MDA MB 231 CRISPRi Analysis"
+title: "SUM 159 Clone 3 CRISPRi Analysis"
 output: github_document
 ---
 
@@ -13,7 +13,7 @@ library(kableExtra)
 library(broom)
 ```
 
-Taking a look at the CRISPRi screen for the dark kinases in MDA MB 231 cells.
+Taking a look at the CRISPRi screen for the dark kinases in SUM 159 cells.
 
 # Loading Data
 

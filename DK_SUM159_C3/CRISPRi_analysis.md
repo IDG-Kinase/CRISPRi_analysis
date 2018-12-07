@@ -1,7 +1,7 @@
-MDA MB 231 CRISPRi Analysis
+SUM 159 Clone 3 CRISPRi Analysis
 ================
 
-Taking a look at the CRISPRi screen for the dark kinases in MDA MB 231 cells.
+Taking a look at the CRISPRi screen for the dark kinases in SUM 159 cells.
 
 Loading Data
 ============
@@ -115,10 +115,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.9041698
+0.9030951
 </td>
 <td style="text-align:right;">
-1.059822
+1.05902
 </td>
 <td style="text-align:right;">
 0.7507311
@@ -129,10 +129,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8286751
+0.8283695
 </td>
 <td style="text-align:right;">
-1.173654
+1.17348
 </td>
 <td style="text-align:right;">
 0.3933474
