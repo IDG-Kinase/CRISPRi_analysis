@@ -14,7 +14,9 @@ alignments  = rbind(
     mutate(Day = 14, Clone = 19),
   read.delim(here('DK_MDAMB231/salmon_output/MDAMB231_C19_D28_S9_R1_001.fastq.gz/quant.sf')) %>%
     mutate(Day = 28, Clone = 19)
-) %>% mutate(gene_name = str_extract(Name,"[^_]*"), gene_name_plus_id = str_extract(Name,"[^_]*_[^_]*_[^_]*"))
+) %>% mutate(gene_name = str_extract(Name,"[^_]*"), 
+             gene_name_plus_id = str_extract(Name,"[^_]*_[^_]*_[^_]*"),
+             cell_line = "MDA MB 231")
 ```
 
 Calculations and Conversions
@@ -24,28 +26,25 @@ The number of reads observed for each day is variable, so instead of doing the d
 
 ``` r
 #Count the total reads per day, we will use this correct for the depth of sequencing coverage
-alignments = alignments %>%
-  group_by(Day, Clone) %>%
-  summarise(total_reads = sum(NumReads)) %>%
-  select(Day,Clone,total_reads) %>%
-  left_join(alignments) %>%
-  mutate(Percentage_reads = NumReads/total_reads)
+alignments = calc_reads_percent_per_day(alignments)
 ```
 
     ## Joining, by = c("Day", "Clone")
 
 ``` r
 #Pick out the first day reads and determine the ratio of first day to other days
-alignments = alignments %>%
-  filter(Day == 0) %>%
-  rename(Percentage_reads_D0 = Percentage_reads) %>%
-  ungroup() %>%
-  select(Name,Percentage_reads_D0) %>%
-  left_join(alignments) %>%
-  mutate(D0_ratio = Percentage_reads/Percentage_reads_D0)
+alignments = ratio_to_day_0(alignments)
 ```
 
     ## Joining, by = "Name"
+
+``` r
+#remove a few unused columns
+alignments = alignments %>%
+  select(-TPM,-Length,-EffectiveLength)
+
+write_rds(alignments,here('DK_MDAMB231/read_counts.rds'))
+```
 
 Non-target Analysis
 ===================
@@ -117,10 +116,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.9385850
+0.9385035
 </td>
 <td style="text-align:right;">
-1.098283
+1.093500
 </td>
 <td style="text-align:right;">
 0.7843456
@@ -131,10 +130,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8096522
+0.8106750
 </td>
 <td style="text-align:right;">
-1.079039
+1.073227
 </td>
 <td style="text-align:right;">
 0.4919590
@@ -204,6 +203,8 @@ dropout_hits = alignment_summary %>%
   filter(number_below_2fold > 1) %>% 
   arrange(desc(number_below_2fold)) %>% 
   select(gene_name,number_below_2fold)
+
+write_rds(dropout_hits,here('DK_MDAMB231/dropout_hits.rds'))
 
 dropout_hits %>%
   kable(col.names = c("Gene Name","Number Sequences 2-Fold Decrease"))
@@ -359,3 +360,53 @@ RIOK1
 </tr>
 </tbody>
 </table>
+Visualizing the Screening Hits
+==============================
+
+``` r
+alignment_hits = alignments %>% 
+  filter(gene_name %in% dropout_hits$gene_name, Day != 0, Day != 14) %>%
+  left_join(dropout_hits) %>%
+  filter(number_below_2fold >= 4)
+```
+
+    ## Joining, by = "gene_name"
+
+``` r
+alignment_hits$gene_name_ordered <- reorder(as.factor(alignment_hits$gene_name),alignment_hits$number_below_2fold)
+
+hit_vals = ggplot(alignment_hits) + 
+  geom_vline(xintercept=0.5,color='red',alpha=0.5) +
+  geom_vline(aes(xintercept=D0_ratio),alpha=0.75) +  
+  facet_grid(rows=vars(gene_name_ordered), switch="y") +
+  theme(strip.text.y = element_text(angle = 180)) +
+  xlim(c(0,2)) +
+  theme_berginski() +
+  labs(x="Day 28/Day 0 Ratio")
+
+ratio_hist = ggplot(alignments %>% filter(Day == 28)) + 
+  geom_histogram(aes(x=D0_ratio), breaks=seq(0,2,length=20)) + 
+  xlim(c(0,2)) +
+  theme_berginski() +
+  theme(plot.margin = margin(0, 5, 0, 17, "pt")) +
+  labs(x="",y="Number of Guides")
+
+library(gridExtra)
+```
+
+    ## 
+    ## Attaching package: 'gridExtra'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     combine
+
+``` r
+grid_layout = rbind(c())
+
+grid.arrange(ratio_hist,hit_vals)
+```
+
+    ## Warning: Removed 15 rows containing non-finite values (stat_bin).
+
+![](CRISPRi_analysis_files/figure-markdown_github/alignment_hits_vis-1.png)
