@@ -47,6 +47,10 @@ alignments = alignments %>%
 
     ## Joining, by = "Name"
 
+``` r
+write_rds(alignments,here('DK_SUM159_C3/read_counts.rds'))
+```
+
 Non-target Analysis
 ===================
 
@@ -115,10 +119,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.9030951
+0.9025438
 </td>
 <td style="text-align:right;">
-1.05902
+1.059290
 </td>
 <td style="text-align:right;">
 0.7507311
@@ -129,10 +133,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8283695
+0.8232606
 </td>
 <td style="text-align:right;">
-1.17348
+1.178234
 </td>
 <td style="text-align:right;">
 0.3933474
@@ -194,6 +198,8 @@ dropout_hits = alignment_summary %>%
   filter(number_below_2fold > 1) %>% 
   arrange(desc(number_below_2fold)) %>% 
   select(gene_name,number_below_2fold)
+
+write_rds(dropout_hits,here('DK_SUM159_C3/dropout_hits.rds'))
 
 dropout_hits %>%
   kable(col.names = c("Gene Name","Number Sequences 2-Fold Decrease"))
@@ -405,3 +411,55 @@ WNK3
 </tr>
 </tbody>
 </table>
+Visualizing the Screening Hits
+==============================
+
+``` r
+alignment_hits = alignments %>% 
+  filter(gene_name %in% dropout_hits$gene_name, Day != 0, Day != 14) %>%
+  left_join(dropout_hits) %>%
+  filter(number_below_2fold >= 4)
+```
+
+    ## Joining, by = "gene_name"
+
+``` r
+alignment_hits$gene_name_ordered <- reorder(as.factor(alignment_hits$gene_name),alignment_hits$number_below_2fold)
+
+hit_vals = ggplot(alignment_hits) + 
+  geom_vline(xintercept=0.5,color='red',alpha=0.5) +
+  geom_vline(aes(xintercept=D0_ratio),alpha=0.75) +  
+  facet_grid(rows=vars(gene_name_ordered), switch="y") +
+  theme(strip.text.y = element_text(angle = 180)) +
+  xlim(c(0,2)) +
+  theme_berginski() +
+  labs(x="Day 28/Day 0 Ratio")
+
+ratio_hist = ggplot(alignments %>% filter(Day == 28)) + 
+  geom_histogram(aes(x=D0_ratio), breaks=seq(0,2,length=20)) + 
+  xlim(c(0,2)) +
+  theme_berginski() +
+  theme(plot.margin = margin(0, 5, 0, 17, "pt")) +
+  labs(x="",y="Number of Guides")
+
+library(gridExtra)
+```
+
+    ## 
+    ## Attaching package: 'gridExtra'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     combine
+
+``` r
+grid_layout = rbind(c())
+
+grid.arrange(ratio_hist,hit_vals)
+```
+
+    ## Warning: Removed 17 rows containing non-finite values (stat_bin).
+
+    ## Warning: Removed 1 rows containing missing values (geom_vline).
+
+![](CRISPRi_analysis_files/figure-markdown_github/alignment_hits_vis-1.png)
