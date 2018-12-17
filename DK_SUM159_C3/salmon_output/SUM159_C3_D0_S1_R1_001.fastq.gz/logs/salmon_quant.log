@@ -1,0 +1,28 @@
+[2018-12-07 15:41:01.550] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2018-12-07 15:41:01.550] [jointLog] [info] parsing read library format
+[2018-12-07 15:41:01.550] [jointLog] [info] There is 1 library.
+[2018-12-07 15:41:01.585] [jointLog] [info] Loading Quasi index
+[2018-12-07 15:41:01.586] [jointLog] [info] Loading 32-bit quasi index
+[2018-12-07 15:41:01.586] [jointLog] [info] done
+[2018-12-07 15:41:01.586] [jointLog] [info] Index contained 1,738 targets
+[2018-12-07 15:41:10.273] [jointLog] [info] Computed 1,749 rich equivalence classes for further processing
+[2018-12-07 15:41:10.273] [jointLog] [info] Counted 6,613,015 total reads in the equivalence classes 
+[2018-12-07 15:41:10.274] [jointLog] [info] Mapping rate = 89.1355%
+
+[2018-12-07 15:41:10.274] [jointLog] [info] finished quantifyLibrary()
+[2018-12-07 15:41:10.274] [jointLog] [info] Starting optimizer
+[2018-12-07 15:41:10.275] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2018-12-07 15:41:10.276] [jointLog] [info] iteration = 0 | max rel diff. = 0.99914
+[2018-12-07 15:41:10.281] [jointLog] [info] iteration = 100 | max rel diff. = 0
+[2018-12-07 15:41:10.281] [jointLog] [info] Finished optimizer
+[2018-12-07 15:41:10.281] [jointLog] [info] writing output 
+
+[2018-12-07 15:41:10.283] [jointLog] [warning] NOTE: Read Lib [[ DK_SUM159_C3//sequencing/SUM159_C3_D0_S1_R1_001.fastq.gz ]] :
+
+Detected a *potential* strand bias > 1% in an unstranded protocol check the file: DK_SUM159_C3//salmon_output/SUM159_C3_D0_S1_R1_001.fastq.gz/lib_format_counts.json for details
+
+[2018-12-07 15:41:10.273] [fileLog] [info] 
+At end of round 0
+==================
+Observed 7419059 total fragments (7419059 in most recent round)
+

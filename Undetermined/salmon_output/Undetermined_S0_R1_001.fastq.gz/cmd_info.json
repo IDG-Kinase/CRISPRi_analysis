@@ -1,0 +1,8 @@
+{
+    "salmon_version": "0.11.3",
+    "index": "salmon_indexes/DK_CRISPR_salmon_index",
+    "libType": "U",
+    "unmatedReads": "Undetermined//sequencing/Undetermined_S0_R1_001.fastq.gz",
+    "output": "Undetermined//salmon_output/Undetermined_S0_R1_001.fastq.gz",
+    "auxDir": "aux_info"
+}

@@ -1,0 +1,9 @@
+{
+    "salmon_version": "0.11.3",
+    "index": "salmon_indexes/DK_CRISPR_salmon_index",
+    "libType": "U",
+    "unmatedReads": "DK_SUM159_C3//sequencing/SUM159_C3_D14_S2_R1_001.fastq.gz",
+    "output": "DK_SUM159_C3//salmon_output/SUM159_C3_D14_S2_R1_001.fastq.gz",
+    "writeMappings": "DK_SUM159_C3//alignments/SUM159_C3_D14_S2_R1_001.fastq.gz.sam",
+    "auxDir": "aux_info"
+}

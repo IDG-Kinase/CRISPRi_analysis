@@ -1,0 +1,28 @@
+[2018-12-05 14:29:14.096] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2018-12-05 14:29:14.096] [jointLog] [info] parsing read library format
+[2018-12-05 14:29:14.096] [jointLog] [info] There is 1 library.
+[2018-12-05 14:29:14.152] [jointLog] [info] Loading Quasi index
+[2018-12-05 14:29:14.152] [jointLog] [info] Loading 32-bit quasi index
+[2018-12-05 14:29:14.152] [jointLog] [info] done
+[2018-12-05 14:29:14.152] [jointLog] [info] Index contained 1,738 targets
+[2018-12-05 14:32:04.755] [fileLog] [info] 
+At end of round 0
+==================
+Observed 169076595 total fragments (169076595 in most recent round)
+
+[2018-12-05 14:32:04.755] [jointLog] [info] Computed 1,754 rich equivalence classes for further processing
+[2018-12-05 14:32:04.755] [jointLog] [info] Counted 89,320,810 total reads in the equivalence classes 
+[2018-12-05 14:32:04.757] [jointLog] [info] Mapping rate = 52.8286%
+
+[2018-12-05 14:32:04.757] [jointLog] [info] finished quantifyLibrary()
+[2018-12-05 14:32:04.757] [jointLog] [info] Starting optimizer
+[2018-12-05 14:32:04.758] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2018-12-05 14:32:04.758] [jointLog] [info] iteration = 0 | max rel diff. = 3.63294
+[2018-12-05 14:32:04.764] [jointLog] [info] iteration = 100 | max rel diff. = 0
+[2018-12-05 14:32:04.764] [jointLog] [info] Finished optimizer
+[2018-12-05 14:32:04.764] [jointLog] [info] writing output 
+
+[2018-12-05 14:32:04.766] [jointLog] [warning] NOTE: Read Lib [[ Undetermined//sequencing/Undetermined_S0_R1_001.fastq.gz ]] :
+
+Detected a *potential* strand bias > 1% in an unstranded protocol check the file: Undetermined//salmon_output/Undetermined_S0_R1_001.fastq.gz/lib_format_counts.json for details
+

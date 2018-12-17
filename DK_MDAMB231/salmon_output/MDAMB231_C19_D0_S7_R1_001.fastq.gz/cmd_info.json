@@ -1,0 +1,9 @@
+{
+    "salmon_version": "0.11.3",
+    "index": "salmon_indexes/DK_CRISPR_salmon_index",
+    "libType": "U",
+    "unmatedReads": "DK_MDAMB231//sequencing/MDAMB231_C19_D0_S7_R1_001.fastq.gz",
+    "output": "DK_MDAMB231//salmon_output/MDAMB231_C19_D0_S7_R1_001.fastq.gz",
+    "writeMappings": "DK_MDAMB231//alignments/MDAMB231_C19_D0_S7_R1_001.fastq.gz.sam",
+    "auxDir": "aux_info"
+}

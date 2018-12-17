@@ -1,0 +1,93 @@
+[2018-12-05 14:08:04.763] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2018-12-05 14:08:04.763] [jointLog] [info] parsing read library format
+[2018-12-05 14:08:04.763] [jointLog] [info] There is 1 library.
+[2018-12-05 14:08:04.801] [jointLog] [info] Loading Quasi index
+[2018-12-05 14:08:04.801] [jointLog] [info] Loading 32-bit quasi index
+[2018-12-05 14:08:04.801] [jointLog] [info] done
+[2018-12-05 14:08:04.801] [jointLog] [info] Index contained 1,738 targets
+[2018-12-05 14:08:09.024] [fileLog] [info] 
+At end of round 0
+==================
+Observed 4022181 total fragments (4022181 in most recent round)
+
+[2018-12-05 14:08:09.024] [jointLog] [info] Computed 1,746 rich equivalence classes for further processing
+[2018-12-05 14:08:09.024] [jointLog] [info] Counted 3,536,451 total reads in the equivalence classes 
+[2018-12-05 14:08:09.025] [jointLog] [warning] Only 3536451 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2018-12-05 14:08:09.025] [jointLog] [info] Mapping rate = 87.9237%
+
+[2018-12-05 14:08:09.025] [jointLog] [info] finished quantifyLibrary()
+[2018-12-05 14:08:09.025] [jointLog] [info] Starting optimizer
+[2018-12-05 14:08:09.026] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2018-12-05 14:08:09.026] [jointLog] [info] iteration = 0 | max rel diff. = 0.999273
+[2018-12-05 14:08:09.032] [jointLog] [info] iteration = 100 | max rel diff. = 0
+[2018-12-05 14:08:09.032] [jointLog] [info] Finished optimizer
+[2018-12-05 14:08:09.032] [jointLog] [info] writing output 
+
+[2018-12-05 14:08:09.034] [jointLog] [warning] NOTE: Read Lib [[ DK_MDAMB231//sequencing/MDAMB231_C19_D0_S7_R1_001.fastq.gz ]] :
+
+Detected a *potential* strand bias > 1% in an unstranded protocol check the file: DK_MDAMB231//salmon_output/MDAMB231_C19_D0_S7_R1_001.fastq.gz/lib_format_counts.json for details
+
+[2018-12-05 14:27:48.567] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2018-12-05 14:27:48.567] [jointLog] [info] parsing read library format
+[2018-12-05 14:27:48.567] [jointLog] [info] There is 1 library.
+[2018-12-05 14:27:48.612] [jointLog] [info] Loading Quasi index
+[2018-12-05 14:27:48.612] [jointLog] [info] Loading 32-bit quasi index
+[2018-12-05 14:27:48.613] [jointLog] [info] done
+[2018-12-05 14:27:48.613] [jointLog] [info] Index contained 1,738 targets
+[2018-12-05 14:27:52.888] [fileLog] [info] 
+At end of round 0
+==================
+Observed 4022181 total fragments (4022181 in most recent round)
+
+[2018-12-05 14:27:52.888] [jointLog] [info] Computed 1,746 rich equivalence classes for further processing
+[2018-12-05 14:27:52.888] [jointLog] [info] Counted 3,536,451 total reads in the equivalence classes 
+[2018-12-05 14:27:52.890] [jointLog] [warning] Only 3536451 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2018-12-05 14:27:52.890] [jointLog] [info] Mapping rate = 87.9237%
+
+[2018-12-05 14:27:52.890] [jointLog] [info] finished quantifyLibrary()
+[2018-12-05 14:27:52.890] [jointLog] [info] Starting optimizer
+[2018-12-05 14:27:52.891] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2018-12-05 14:27:52.891] [jointLog] [info] iteration = 0 | max rel diff. = 0.999273
+[2018-12-05 14:27:52.897] [jointLog] [info] iteration = 100 | max rel diff. = 0
+[2018-12-05 14:27:52.897] [jointLog] [info] Finished optimizer
+[2018-12-05 14:27:52.897] [jointLog] [info] writing output 
+
+[2018-12-05 14:27:52.901] [jointLog] [warning] NOTE: Read Lib [[ DK_MDAMB231//sequencing/MDAMB231_C19_D0_S7_R1_001.fastq.gz ]] :
+
+Detected a *potential* strand bias > 1% in an unstranded protocol check the file: DK_MDAMB231//salmon_output/MDAMB231_C19_D0_S7_R1_001.fastq.gz/lib_format_counts.json for details
+
+[2018-12-05 15:14:37.885] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2018-12-05 15:14:37.885] [jointLog] [info] parsing read library format
+[2018-12-05 15:14:37.885] [jointLog] [info] There is 1 library.
+[2018-12-05 15:14:37.920] [jointLog] [info] Loading Quasi index
+[2018-12-05 15:14:37.920] [jointLog] [info] Loading 32-bit quasi index
+[2018-12-05 15:14:37.920] [jointLog] [info] done
+[2018-12-05 15:14:37.920] [jointLog] [info] Index contained 1,738 targets
+[2018-12-05 15:14:42.363] [fileLog] [info] 
+At end of round 0
+==================
+Observed 4022181 total fragments (4022181 in most recent round)
+
+[2018-12-05 15:14:42.363] [jointLog] [info] Computed 1,746 rich equivalence classes for further processing
+[2018-12-05 15:14:42.363] [jointLog] [info] Counted 3,536,451 total reads in the equivalence classes 
+[2018-12-05 15:14:42.364] [jointLog] [warning] Only 3536451 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2018-12-05 15:14:42.364] [jointLog] [info] Mapping rate = 87.9237%
+
+[2018-12-05 15:14:42.364] [jointLog] [info] finished quantifyLibrary()
+[2018-12-05 15:14:42.364] [jointLog] [info] Starting optimizer
+[2018-12-05 15:14:42.365] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2018-12-05 15:14:42.365] [jointLog] [info] iteration = 0 | max rel diff. = 0.999273
+[2018-12-05 15:14:42.371] [jointLog] [info] iteration = 100 | max rel diff. = 0
+[2018-12-05 15:14:42.371] [jointLog] [info] Finished optimizer
+[2018-12-05 15:14:42.371] [jointLog] [info] writing output 
+
+[2018-12-05 15:14:42.373] [jointLog] [warning] NOTE: Read Lib [[ DK_MDAMB231//sequencing/MDAMB231_C19_D0_S7_R1_001.fastq.gz ]] :
+
+Detected a *potential* strand bias > 1% in an unstranded protocol check the file: DK_MDAMB231//salmon_output/MDAMB231_C19_D0_S7_R1_001.fastq.gz/lib_format_counts.json for details
+
