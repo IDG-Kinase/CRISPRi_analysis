@@ -47,6 +47,10 @@ alignments = alignments %>%
 
     ## Joining, by = "Name"
 
+``` r
+write_rds(alignments,here('DK_SUM159_C7/read_counts.rds'))
+```
+
 Non-target Analysis
 ===================
 
@@ -115,10 +119,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.7514387
+0.7472488
 </td>
 <td style="text-align:right;">
-0.9818165
+0.9822669
 </td>
 <td style="text-align:right;">
 0.4758460
@@ -129,10 +133,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8470017
+0.8447365
 </td>
 <td style="text-align:right;">
-1.0917612
+1.0909644
 </td>
 <td style="text-align:right;">
 0.5718818
@@ -152,10 +156,17 @@ As a first pass, let's take a look at the distribution of day 0 ratios for both 
 alignments_gene = alignments %>% filter(gene_name != "non-targeting" & Day != 0)
 ggplot(alignments_gene, aes(x=D0_ratio, y = stat(density), color=as.factor(Day))) + 
   geom_freqpoly(bins=50) + theme_berginski() +
-  labs(x="Ratio with Day 0",y="Density")
+  labs(x="Ratio with Day 0",y="Density") +
+  xlim(c(0,5))
 ```
 
-![](CRISPRi_analysis_files/figure-markdown_github/Day0-dist-1.png) Looks like the spread increases by day 28, which should be expected due to each of the sequences having more time to act on the growth phenotype. Is there are a relationship between the ratios at day 14 and 28?
+    ## Warning: Removed 5 rows containing non-finite values (stat_bin).
+
+    ## Warning: Removed 4 rows containing missing values (geom_path).
+
+![](CRISPRi_analysis_files/figure-markdown_github/Day0-dist-1.png)
+
+Looks like the spread increases by day 28, which should be expected due to each of the sequences having more time to act on the growth phenotype. Is there are a relationship between the ratios at day 14 and 28?
 
 ``` r
 alignments_day_comp = alignments_gene %>% select(Name,Day,D0_ratio,gene_name_plus_id) %>% spread(Day,D0_ratio,sep="_")
@@ -194,6 +205,8 @@ dropout_hits = alignment_summary %>%
   filter(number_below_2fold > 1) %>% 
   arrange(desc(number_below_2fold)) %>% 
   select(gene_name,number_below_2fold)
+
+write_rds(dropout_hits,here('DK_SUM159_C7/dropout_hits.rds'))
 
 dropout_hits %>%
   kable(col.names = c("Gene Name","Number Sequences 2-Fold Decrease"))
@@ -469,3 +482,11 @@ WNK3
 </tr>
 </tbody>
 </table>
+Visualizing the Screening Hits
+==============================
+
+    ## Joining, by = "gene_name"
+
+    ## Warning: Removed 20 rows containing non-finite values (stat_bin).
+
+![](CRISPRi_analysis_files/figure-markdown_github/alignment_hits_vis-1.png)

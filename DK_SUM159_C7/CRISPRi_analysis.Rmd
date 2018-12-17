@@ -11,6 +11,7 @@ library(boot)
 library(knitr)
 library(kableExtra)
 library(broom)
+library(gridExtra)
 ```
 
 Taking a look at the CRISPRi screen for the dark kinases in SUM 159 cells.
@@ -49,6 +50,8 @@ alignments = alignments %>%
   select(Name,Percentage_reads_D0) %>%
   left_join(alignments) %>%
   mutate(D0_ratio = Percentage_reads/Percentage_reads_D0)
+
+write_rds(alignments,here('DK_SUM159_C7/read_counts.rds'))
 ```
 
 # Non-target Analysis
@@ -98,8 +101,10 @@ As a first pass, let's take a look at the distribution of day 0 ratios for both 
 alignments_gene = alignments %>% filter(gene_name != "non-targeting" & Day != 0)
 ggplot(alignments_gene, aes(x=D0_ratio, y = stat(density), color=as.factor(Day))) + 
   geom_freqpoly(bins=50) + theme_berginski() +
-  labs(x="Ratio with Day 0",y="Density")
+  labs(x="Ratio with Day 0",y="Density") +
+  xlim(c(0,5))
 ```
+
 Looks like the spread increases by day 28, which should be expected due to each of the sequences having more time to act on the growth phenotype. Is there are a relationship between the ratios at day 14 and 28?
 
 ```{r Day14-vs-28}
@@ -133,6 +138,39 @@ dropout_hits = alignment_summary %>%
   arrange(desc(number_below_2fold)) %>% 
   select(gene_name,number_below_2fold)
 
+write_rds(dropout_hits,here('DK_SUM159_C7/dropout_hits.rds'))
+
 dropout_hits %>%
   kable(col.names = c("Gene Name","Number Sequences 2-Fold Decrease"))
+```
+
+# Visualizing the Screening Hits
+
+```{r, alignment_hits_vis, echo=F}
+alignment_hits = alignments %>% 
+  filter(gene_name %in% dropout_hits$gene_name, Day != 0, Day != 14) %>%
+  left_join(dropout_hits) %>%
+  filter(number_below_2fold >= 4)
+
+alignment_hits$gene_name_ordered <- reorder(as.factor(alignment_hits$gene_name),alignment_hits$number_below_2fold)
+
+hit_vals = ggplot(alignment_hits) + 
+  geom_vline(xintercept=0.5,color='red',alpha=0.5) +
+  geom_vline(aes(xintercept=D0_ratio),alpha=0.75) +  
+  facet_grid(rows=vars(gene_name_ordered), switch="y") +
+  theme(strip.text.y = element_text(angle = 180)) +
+  xlim(c(0,2)) +
+  theme_berginski() +
+  labs(x="Day 28/Day 0 Ratio")
+
+ratio_hist = ggplot(alignments %>% filter(Day == 28)) + 
+  geom_histogram(aes(x=D0_ratio), breaks=seq(0,2,length=20)) + 
+  xlim(c(0,2)) +
+  theme_berginski() +
+  theme(plot.margin = margin(0, 5, 0, 17, "pt")) +
+  labs(x="",y="Number of Guides")
+
+grid_layout = rbind(c())
+
+grid.arrange(ratio_hist,hit_vals)
 ```
