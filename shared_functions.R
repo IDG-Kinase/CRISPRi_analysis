@@ -1,8 +1,8 @@
 calc_reads_percent_per_day <- function(alignments) {
   alignments = alignments %>%
-    group_by(Day, Clone) %>%
+    group_by(Day, clone) %>%
     summarise(total_reads = sum(NumReads)) %>%
-    select(Day,Clone,total_reads) %>%
+    select(Day,clone,total_reads) %>%
     left_join(alignments) %>%
     mutate(Percentage_reads = NumReads/total_reads)
   

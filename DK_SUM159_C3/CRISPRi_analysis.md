@@ -9,12 +9,15 @@ Loading Data
 ``` r
 alignments  = rbind(
   read.delim(here('DK_SUM159_C3/salmon_output/SUM159_C3_D0_S1_R1_001.fastq.gz/quant.sf')) %>%
-    mutate(Day = 0, Clone = 3),
+    mutate(Day = 0),
   read.delim(here('DK_SUM159_C3/salmon_output/SUM159_C3_D14_S2_R1_001.fastq.gz/quant.sf')) %>%
-    mutate(Day = 14, Clone = 3),
+    mutate(Day = 14),
   read.delim(here('DK_SUM159_C3/salmon_output/SUM159_C3_D28_S3_R1_001.fastq.gz/quant.sf')) %>%
-    mutate(Day = 28, Clone = 3)
-) %>% mutate(gene_name = str_extract(Name,"[^_]*"), gene_name_plus_id = str_extract(Name,"[^_]*_[^_]*_[^_]*"))
+    mutate(Day = 28)
+) %>% mutate(gene_name = str_extract(Name,"[^_]*"), 
+             gene_name_plus_id = str_extract(Name,"[^_]*_[^_]*_[^_]*"),
+             cell_line = "SUM159",
+             clone = 3)
 ```
 
 Calculations and Conversions
@@ -24,30 +27,23 @@ The number of reads observed for each day is variable, so instead of doing the d
 
 ``` r
 #Count the total reads per day, we will use this correct for the depth of sequencing coverage
-alignments = alignments %>%
-  group_by(Day, Clone) %>%
-  summarise(total_reads = sum(NumReads)) %>%
-  select(Day,Clone,total_reads) %>%
-  left_join(alignments) %>%
-  mutate(Percentage_reads = NumReads/total_reads)
+alignments = calc_reads_percent_per_day(alignments)
 ```
 
-    ## Joining, by = c("Day", "Clone")
+    ## Joining, by = c("Day", "clone")
 
 ``` r
 #Pick out the first day reads and determine the ratio of first day to other days
-alignments = alignments %>%
-  filter(Day == 0) %>%
-  rename(Percentage_reads_D0 = Percentage_reads) %>%
-  ungroup() %>%
-  select(Name,Percentage_reads_D0) %>%
-  left_join(alignments) %>%
-  mutate(D0_ratio = Percentage_reads/Percentage_reads_D0)
+alignments = ratio_to_day_0(alignments)
 ```
 
     ## Joining, by = "Name"
 
 ``` r
+#remove a few unused columns
+alignments = alignments %>%
+  select(-TPM,-Length,-EffectiveLength)
+
 write_rds(alignments,here('DK_SUM159_C3/read_counts.rds'))
 ```
 
@@ -119,10 +115,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.9025438
+0.9027438
 </td>
 <td style="text-align:right;">
-1.059290
+1.062414
 </td>
 <td style="text-align:right;">
 0.7507311
@@ -133,10 +129,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8232606
+0.8255741
 </td>
 <td style="text-align:right;">
-1.178234
+1.175201
 </td>
 <td style="text-align:right;">
 0.3933474

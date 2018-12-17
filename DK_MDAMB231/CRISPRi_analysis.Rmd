@@ -22,14 +22,15 @@ Taking a look at the CRISPRi screen for the dark kinases in MDA MB 231 cells.
 ```{r loading}
 alignments  = rbind(
   read.delim(here('DK_MDAMB231/salmon_output/MDAMB231_C19_D0_S7_R1_001.fastq.gz/quant.sf')) %>%
-    mutate(Day = 0, Clone = 19),
+    mutate(Day = 0),
   read.delim(here('DK_MDAMB231/salmon_output/MDAMB231_C19_D14_S8_R1_001.fastq.gz/quant.sf')) %>%
-    mutate(Day = 14, Clone = 19),
+    mutate(Day = 14),
   read.delim(here('DK_MDAMB231/salmon_output/MDAMB231_C19_D28_S9_R1_001.fastq.gz/quant.sf')) %>%
-    mutate(Day = 28, Clone = 19)
+    mutate(Day = 28)
 ) %>% mutate(gene_name = str_extract(Name,"[^_]*"), 
              gene_name_plus_id = str_extract(Name,"[^_]*_[^_]*_[^_]*"),
-             cell_line = "MDA MB 231")
+             cell_line = "MDA MB 231",
+             clone = 19)
 ```
 
 # Calculations and Conversions

@@ -9,14 +9,15 @@ Loading Data
 ``` r
 alignments  = rbind(
   read.delim(here('DK_MDAMB231/salmon_output/MDAMB231_C19_D0_S7_R1_001.fastq.gz/quant.sf')) %>%
-    mutate(Day = 0, Clone = 19),
+    mutate(Day = 0),
   read.delim(here('DK_MDAMB231/salmon_output/MDAMB231_C19_D14_S8_R1_001.fastq.gz/quant.sf')) %>%
-    mutate(Day = 14, Clone = 19),
+    mutate(Day = 14),
   read.delim(here('DK_MDAMB231/salmon_output/MDAMB231_C19_D28_S9_R1_001.fastq.gz/quant.sf')) %>%
-    mutate(Day = 28, Clone = 19)
+    mutate(Day = 28)
 ) %>% mutate(gene_name = str_extract(Name,"[^_]*"), 
              gene_name_plus_id = str_extract(Name,"[^_]*_[^_]*_[^_]*"),
-             cell_line = "MDA MB 231")
+             cell_line = "MDA MB 231",
+             clone = 19)
 ```
 
 Calculations and Conversions
@@ -29,7 +30,7 @@ The number of reads observed for each day is variable, so instead of doing the d
 alignments = calc_reads_percent_per_day(alignments)
 ```
 
-    ## Joining, by = c("Day", "Clone")
+    ## Joining, by = c("Day", "clone")
 
 ``` r
 #Pick out the first day reads and determine the ratio of first day to other days
@@ -116,10 +117,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.9385035
+0.9391882
 </td>
 <td style="text-align:right;">
-1.093500
+1.093053
 </td>
 <td style="text-align:right;">
 0.7843456
@@ -130,10 +131,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8106750
+0.8068795
 </td>
 <td style="text-align:right;">
-1.073227
+1.076920
 </td>
 <td style="text-align:right;">
 0.4919590
