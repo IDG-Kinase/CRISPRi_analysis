@@ -1,0 +1,169 @@
+---
+title: "MDA MB 231 CRISPRi Analysis"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(BerginskiRMisc)
+library(here)
+library(boot)
+library(knitr)
+library(kableExtra)
+library(broom)
+```
+
+Taking a look at the CRISPRi screen for the dark kinases in MDA MB 231 cells.
+
+# Loading Data
+
+```{r loading}
+alignments_files = Sys.glob(here('*/read_counts.rds'))
+all_reads = read_rds(alignments_files[1])
+for (this_file in alignments_files[-1]) {
+  all_reads <- rbind(all_reads, 
+                     read_rds(this_file) %>%
+                       select(-Length,-EffectiveLength,-TPM))
+}
+```
+
+# Calculations and Conversions
+
+The number of reads observed for each day is variable, so instead of doing the downstream calculations on the read count, we will instead convert these into the percentage of reads from that day. We'll also pick out the percentage of reads from Day 0 and use that to calculate the shifts in reads between Day 0 and Day 14/28.
+
+```{r conversion-calculation}
+#Count the total reads per day, we will use this correct for the depth of sequencing coverage
+alignments = calc_reads_percent_per_day(alignments)
+
+#Pick out the first day reads and determine the ratio of first day to other days
+alignments = ratio_to_day_0(alignments)
+
+#remove a few unused columns
+alignments = alignments %>%
+  select(-TPM,-Length,-EffectiveLength)
+
+write_rds(alignments,here('DK_MDAMB231/read_counts.rds'))
+```
+
+# Non-target Analysis
+
+With the ratios calculated, my next step is to take a look at the non-targetting sequences. These sequences shouldn't be targetting any genetic locus and so can act as a negative control for the other targeting sequences. 
+
+```{r non-targeting-percentage}
+non_target_counts = alignments %>% filter(gene_name == "non-targeting")
+
+ggplot(non_target_counts, aes(x=Day,y=Percentage_reads, color=gene_name_plus_id)) + 
+  geom_line() + theme_berginski() + labs(x="Days",y="Percentage of Total Reads",color="Target ID")
+```
+
+The raw percentage counts look good, all roughly stable without any changes. Let's look at the ratios with day 0.
+
+```{r non-targeting-ratio}
+ggplot(non_target_counts, aes(x=Day,y=D0_ratio, color=gene_name_plus_id)) + 
+  geom_line() + theme_berginski() + labs(x="Days",y="Day 0 Ratio",color="Target ID")
+
+ggplot(non_target_counts, aes(x=as.factor(Day),y=D0_ratio)) + 
+  geom_boxplot() + theme_berginski() + labs(x="Days",y="Day 0 Ratio")
+```
+
+OK, looks like there is certainly some spread in the ratios as Day 14/28 are analyzed. The outlier value is the 00001 sequence, which also has the lowest raw read counts (on average `r mean(filter(non_target_counts,gene_name_plus_id == "non-targeting_00001_")$NumReads)`), all the others are in the thousands. We will probably want to be weary of ratios deriving from lower read count values.
+
+One last point, let's look at the confidence intervals for the ratio values. I'll use the bootstrap confidence interval.
+
+```{r non-target-conf}
+non_target_conf = non_target_counts %>% 
+  #Toss out day one as the ratios are meaningless there
+  filter(Day != 0) %>% 
+  group_by(Day) %>% 
+  summarise(boot.low = boot.ci(boot(D0_ratio, function(data,index) {mean(data[index])}, 10000), type="bca", conf=0.95)$bca[4],
+            boot.high = boot.ci(boot(D0_ratio, function(data,index) {mean(data[index])}, 10000), type="bca", conf=0.95)$bca[5],
+            quantile.low = boot.ci(boot(D0_ratio, function(data,index) {quantile(data[index],c(0.05))}, 10000), type="bca", conf=0.0001)$bca[4])
+
+non_target_conf %>%
+  kable()
+```
+
+OK, this looks good, the confidence intervals include 1. Let's move onto the rest of the data.
+
+# Gene Ratio Values
+
+As a first pass, let's take a look at the distribution of day 0 ratios for both day 14 and 28.
+
+```{r Day0-dist}
+#remove the non-targeting alignments and day zero ratios
+alignments_gene = alignments %>% filter(gene_name != "non-targeting" & Day != 0)
+ggplot(alignments_gene, aes(x=D0_ratio, y = stat(density), color=as.factor(Day))) + 
+  geom_freqpoly(bins=50) + theme_berginski() +
+  labs(x="Ratio with Day 0",y="Density")
+```
+Looks like the spread increases by day 28, which should be expected due to each of the sequences having more time to act on the growth phenotype. Is there are a relationship between the ratios at day 14 and 28?
+
+```{r Day14-vs-28}
+alignments_day_comp = alignments_gene %>% select(Name,Day,D0_ratio,gene_name_plus_id) %>% spread(Day,D0_ratio,sep="_")
+ggplot(alignments_day_comp, aes(x=Day_14,y=Day_28)) + 
+  geom_point(alpha=0.1) + geom_density2d() + geom_smooth(method="lm") +
+  theme_berginski() +
+  labs(x ="Day 14/Day 0", y="Day 28/Day 0")
+```
+
+I'm not sure how correlated I expected this to be, but the `r round(cor(alignments_day_comp$Day_14,alignments_day_comp$Day_28,use="complete.obs"),2)` value seems a bit low, but maybe that's just par for this type of data.
+
+# Determining the Screening Hits
+
+There is no fixed method for determining which genes are "hits" given the ratios observed. This difficulty is compounded by the fact that some of these guide sequences simply won't be effective at reducing gene expression. Thus, we can't differtiate between an ineffective sequence and an effective sequence that doesn't affect growth. Despite that, we can still look to see how many sequences associated with a given gene show up below a given ratio threshold, as a first attempt I've used a 2-fold decrease. 
+
+```{r dropouts}
+alignment_summary = alignments %>%
+  filter(Day != 0, Day != 14) %>%
+  group_by(gene_name,Day) %>%
+  summarise(number_below_2fold = sum(D0_ratio < 0.5, na.rm=T),
+            number_above_2fold = sum(D0_ratio > 2, na.rm=T),
+            p_val = tidy(wilcox.test(D0_ratio,non_target_counts$D0_ratio[non_target_counts$Day == 28]))$p.value)
+```
+
+Now, let's filter this down to just those with at least two sequences below 2-fold decrease.
+
+```{r dropout_table}
+dropout_hits = alignment_summary %>% 
+  filter(number_below_2fold > 1) %>% 
+  arrange(desc(number_below_2fold)) %>% 
+  select(gene_name,number_below_2fold)
+
+write_rds(dropout_hits,here('DK_MDAMB231/dropout_hits.rds'))
+
+dropout_hits %>%
+  kable(col.names = c("Gene Name","Number Sequences 2-Fold Decrease"))
+```
+
+# Visualizing the Screening Hits
+
+```{r, alignment_hits_vis}
+alignment_hits = alignments %>% 
+  filter(gene_name %in% dropout_hits$gene_name, Day != 0, Day != 14) %>%
+  left_join(dropout_hits) %>%
+  filter(number_below_2fold >= 4)
+
+alignment_hits$gene_name_ordered <- reorder(as.factor(alignment_hits$gene_name),alignment_hits$number_below_2fold)
+
+hit_vals = ggplot(alignment_hits) + 
+  geom_vline(xintercept=0.5,color='red',alpha=0.5) +
+  geom_vline(aes(xintercept=D0_ratio),alpha=0.75) +  
+  facet_grid(rows=vars(gene_name_ordered), switch="y") +
+  theme(strip.text.y = element_text(angle = 180)) +
+  xlim(c(0,2)) +
+  theme_berginski() +
+  labs(x="Day 28/Day 0 Ratio")
+
+ratio_hist = ggplot(alignments %>% filter(Day == 28)) + 
+  geom_histogram(aes(x=D0_ratio), breaks=seq(0,2,length=20)) + 
+  xlim(c(0,2)) +
+  theme_berginski() +
+  theme(plot.margin = margin(0, 5, 0, 17, "pt")) +
+  labs(x="",y="Number of Guides")
+
+library(gridExtra)
+
+grid_layout = rbind(c())
+
+grid.arrange(ratio_hist,hit_vals)
+```
