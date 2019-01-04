@@ -58,7 +58,7 @@ ggplot(dropout_reads, aes(x=D0_ratio,y=exp_name, group=Name)) +
   facet_grid(vars(gene_name))
 ```
 
-![](combined_analysis_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](combined_analysis_files/figure-markdown_github/dropout_min_four-1.png)
 
 The colors in each individual plot show a single guide sequence in all of the experiments. The genes are ordered by the average number of guide sequences below a 2-fold drop.
 
@@ -86,7 +86,7 @@ ggplot(dropout_reads, aes(x=D0_ratio,y=exp_name, group=Name)) +
   facet_grid(vars(gene_name))
 ```
 
-![](combined_analysis_files/figure-markdown_github/unnamed-chunk-3-1.png)
+![](combined_analysis_files/figure-markdown_github/dropout_min_two-1.png)
 
 ``` r
 ggsave(here('Combined_analysis/min2_below_2fold.svg'), height = 24,width=4)

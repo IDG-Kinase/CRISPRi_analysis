@@ -49,7 +49,7 @@ all_dropout_order = all_dropout %>%
 
 OK, looking at the guides where at least one of the cell lines has 4 guides past the 2-fold drop line, here is a figure that shows the performance of each guide in each of the experiments.
 
-```{r, fig.height=6.5, width=4}
+```{r dropout_min_four, fig.height=6.5, width=4}
 dropout_reads = all_reads %>% 
   filter(gene_name %in% unique(all_dropout_filt$gene_name), Day == 28) %>% 
   mutate(exp_name = paste0(cell_line,' C', clone)) %>%
@@ -78,7 +78,7 @@ ggsave(here('Combined_analysis/min4_below_2fold.svg'), height = 6.5,width=4)
 
 Same visualizaiton as above, only with the minimum number of guides set to 2 instead.
 
-```{r, fig.height=24, width=4}
+```{r dropout_min_two, fig.height=24, width=4}
 dropout_reads = all_reads %>% 
   filter(gene_name %in% unique(all_dropout$gene_name), Day == 28) %>% 
   mutate(exp_name = paste0(cell_line,' C', clone)) %>%
