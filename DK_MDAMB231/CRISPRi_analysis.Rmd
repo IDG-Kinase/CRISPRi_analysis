@@ -144,7 +144,7 @@ dropout_hits %>%
 
 # Visualizing the Screening Hits
 
-```{r, alignment_hits_vis}
+```{r alignment_hits_vis}
 alignment_hits = alignments %>% 
   filter(gene_name %in% dropout_hits$gene_name, Day != 0, Day != 14) %>%
   left_join(dropout_hits) %>%
