@@ -141,6 +141,7 @@ dropout_hits %>%
   kable(col.names = c("Gene Name","Number Sequences 2-Fold Decrease"))
 ```
 
+
 # Visualizing the Screening Hits
 
 ```{r, alignment_hits_vis}
