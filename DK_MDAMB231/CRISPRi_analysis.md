@@ -117,10 +117,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.9381850
+0.9396119
 </td>
 <td style="text-align:right;">
-1.094237
+1.093562
 </td>
 <td style="text-align:right;">
 0.7843456
@@ -131,10 +131,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8077252
+0.8096869
 </td>
 <td style="text-align:right;">
-1.077542
+1.073628
 </td>
 <td style="text-align:right;">
 0.4919590
@@ -190,6 +190,7 @@ alignment_summary = alignments %>%
   group_by(gene_name,Day) %>%
   summarise(number_below_2fold = sum(D0_ratio < 0.5, na.rm=T),
             number_above_2fold = sum(D0_ratio > 2, na.rm=T),
+            average_ratio = mean(D0_ratio),
             p_val = tidy(wilcox.test(D0_ratio,non_target_counts$D0_ratio[non_target_counts$Day == 28]))$p.value)
 ```
 
@@ -361,54 +362,80 @@ RIOK1
 </tr>
 </tbody>
 </table>
+.
+
+Genes with guides with 2-fold Increase in Adundance
+===================================================
+
+``` r
+dropin_hits = alignment_summary %>% 
+  filter(number_above_2fold > 1) %>% 
+  arrange(desc(number_above_2fold)) %>% 
+  select(gene_name,number_above_2fold)
+
+dropin_hits %>%
+  kable(col.names = c("Gene Name","Number Sequences 2-Fold Increase"))
+```
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Gene Name
+</th>
+<th style="text-align:right;">
+Number Sequences 2-Fold Increase
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+HIPK3
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SGK223
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+STK40
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+</tbody>
+</table>
+.
 
 Visualizing the Screening Hits
 ==============================
 
-``` r
-alignment_hits = alignments %>% 
-  filter(gene_name %in% dropout_hits$gene_name, Day != 0, Day != 14) %>%
-  left_join(dropout_hits) %>%
-  filter(number_below_2fold >= 4)
-```
-
     ## Joining, by = "gene_name"
 
-``` r
-alignment_hits$gene_name_ordered <- reorder(as.factor(alignment_hits$gene_name),alignment_hits$number_below_2fold)
-
-hit_vals = ggplot(alignment_hits) + 
-  geom_vline(xintercept=0.5,color='red',alpha=0.5) +
-  geom_vline(aes(xintercept=D0_ratio),alpha=0.75) +  
-  facet_grid(rows=vars(gene_name_ordered), switch="y") +
-  theme(strip.text.y = element_text(angle = 180)) +
-  xlim(c(0,2)) +
-  theme_berginski() +
-  labs(x="Day 28/Day 0 Ratio")
-
-ratio_hist = ggplot(alignments %>% filter(Day == 28)) + 
-  geom_histogram(aes(x=D0_ratio), breaks=seq(0,2,length=20)) + 
-  xlim(c(0,2)) +
-  theme_berginski() +
-  theme(plot.margin = margin(0, 5, 0, 17, "pt")) +
-  labs(x="",y="Number of Guides")
-
-library(gridExtra)
-```
-
-    ## 
-    ## Attaching package: 'gridExtra'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     combine
-
-``` r
-grid_layout = rbind(c())
-
-grid.arrange(ratio_hist,hit_vals)
-```
+    ## Joining, by = c("Day", "gene_name", "number_below_2fold")
 
     ## Warning: Removed 15 rows containing non-finite values (stat_bin).
 
 ![](CRISPRi_analysis_files/figure-markdown_github/alignment_hits_vis-1.png)
+
+This is the same plot as above, execept with log10 scale. Note that since some of the ratios are zero (reads at day 28 were zero), I had to add a "psuedo" ratio min value to make the log10 scale work.
+
+    ## Joining, by = "gene_name"
+
+    ## Joining, by = c("Day", "gene_name", "number_below_2fold")
+
+    ## Warning: Removed 16 rows containing non-finite values (stat_bin).
+
+    ## Warning: Removed 2 rows containing missing values (geom_bar).
+
+![](CRISPRi_analysis_files/figure-markdown_github/alignment_hits_vis_log10-1.png)
