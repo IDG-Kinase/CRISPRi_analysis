@@ -11,8 +11,11 @@ library(boot)
 library(knitr)
 library(kableExtra)
 library(broom)
+library(gridExtra)
 
 source(here('shared_functions.R'))
+
+knitr::opts_chunk$set(dev = c('png','svg'))
 ```
 
 Taking a look at the CRISPRi screen for the dark kinases in SUM 159 cells.
@@ -122,6 +125,7 @@ alignment_summary = alignments %>%
   group_by(gene_name,Day) %>%
   summarise(number_below_2fold = sum(D0_ratio < 0.5, na.rm=T),
             number_above_2fold = sum(D0_ratio > 2, na.rm=T),
+            average_ratio = mean(D0_ratio),
             p_val = tidy(wilcox.test(D0_ratio,non_target_counts$D0_ratio[non_target_counts$Day == 28]))$p.value)
 ```
 
@@ -138,16 +142,31 @@ write_rds(dropout_hits,here('DK_SUM159_C3/dropout_hits.rds'))
 dropout_hits %>%
   kable(col.names = c("Gene Name","Number Sequences 2-Fold Decrease"))
 ```
+.
+
+# Genes with guides with 2-fold Increase in Adundance
+
+```{r dropin_table}
+dropin_hits = alignment_summary %>% 
+  filter(number_above_2fold > 1) %>% 
+  arrange(desc(number_above_2fold)) %>% 
+  select(gene_name,number_above_2fold)
+
+dropin_hits %>%
+  kable(col.names = c("Gene Name","Number Sequences 2-Fold Increase"))
+```
+.
 
 # Visualizing the Screening Hits
 
-```{r, alignment_hits_vis}
+```{r alignment_hits_vis, echo=F, warnings=F}
 alignment_hits = alignments %>% 
   filter(gene_name %in% dropout_hits$gene_name, Day != 0, Day != 14) %>%
   left_join(dropout_hits) %>%
+  left_join(alignment_summary) %>%
   filter(number_below_2fold >= 4)
 
-alignment_hits$gene_name_ordered <- reorder(as.factor(alignment_hits$gene_name),alignment_hits$number_below_2fold)
+alignment_hits$gene_name_ordered <- reorder(as.factor(alignment_hits$gene_name),alignment_hits$average_ratio)
 
 hit_vals = ggplot(alignment_hits) + 
   geom_vline(xintercept=0.5,color='red',alpha=0.5) +
@@ -159,15 +178,50 @@ hit_vals = ggplot(alignment_hits) +
   labs(x="Day 28/Day 0 Ratio")
 
 ratio_hist = ggplot(alignments %>% filter(Day == 28)) + 
-  geom_histogram(aes(x=D0_ratio), breaks=seq(0,2,length=20)) + 
+  geom_histogram(aes(x=D0_ratio), breaks=seq(0,2,length=50)) + 
+  geom_vline(xintercept=0.5,color='red',alpha=0.5) +
+  annotate("text", x= 0.5,y=150,label="2-Fold Decrease", angle=90,hjust="right",vjust="bottom",color="red") +
   xlim(c(0,2)) +
   theme_berginski() +
-  theme(plot.margin = margin(0, 5, 0, 17, "pt")) +
+  theme(plot.margin = margin(10, 5, 0, 18, "pt")) +
   labs(x="",y="Number of Guides")
 
-library(gridExtra)
+guide_vis = grid.arrange(ratio_hist,hit_vals)
+```
 
-grid_layout = rbind(c())
+This is the same plot as above, execept with log10 scale. Note that since some of the ratios are zero (reads at day 28 were zero), I had to add a "psuedo" ratio min value to make the log10 scale work.
+
+```{r alignment_hits_vis_log10, echo=F, warnings=F}
+alignment_hits = alignments %>% 
+  filter(gene_name %in% dropout_hits$gene_name, Day != 0, Day != 14) %>%
+  left_join(dropout_hits) %>%
+  left_join(alignment_summary) %>%
+  filter(number_below_2fold >= 4) %>%
+  mutate(D0_ratio_psuedo = ifelse(D0_ratio <= 0.000001,D0_ratio + 0.001,D0_ratio))
+
+alignment_hits$gene_name_ordered <- reorder(as.factor(alignment_hits$gene_name),alignment_hits$average_ratio)
+
+alignments_plus_psuedo = alignments %>%
+  mutate(D0_ratio_psuedo = ifelse(D0_ratio <= 0.000001,D0_ratio + 0.001,D0_ratio))
+
+hit_vals = ggplot(alignment_hits) + 
+  geom_vline(xintercept=log10(0.5),color='red',alpha=0.5) +
+  geom_vline(aes(xintercept=log10(D0_ratio_psuedo)),alpha=0.75) +  
+  facet_grid(rows=vars(gene_name_ordered), switch="y") +
+  theme(strip.text.y = element_text(angle = 180)) +
+  # scale_x_log10() +
+  xlim(c(log10(min(alignment_hits$D0_ratio_psuedo)),log10(2))) +
+  theme_berginski() +
+  labs(x="Log Day 28/Day 0 Ratio")
+
+ratio_hist = ggplot(alignments_plus_psuedo %>% filter(Day == 28)) + 
+  geom_histogram(aes(x=log10(D0_ratio_psuedo)), bins=50) + 
+  geom_vline(xintercept=log10(0.5),color='red',alpha=0.5) +
+  # scale_x_log10() +
+  xlim(c(log10(min(alignment_hits$D0_ratio_psuedo)),log10(2))) +
+  theme_berginski() +
+  theme(plot.margin = margin(0, 0, 0, 0, "pt")) +
+  labs(x="",y="Number of Guides")
 
 grid.arrange(ratio_hist,hit_vals)
 ```
