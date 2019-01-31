@@ -117,10 +117,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.9391882
+0.9381850
 </td>
 <td style="text-align:right;">
-1.093053
+1.094237
 </td>
 <td style="text-align:right;">
 0.7843456
@@ -131,10 +131,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8068795
+0.8077252
 </td>
 <td style="text-align:right;">
-1.076920
+1.077542
 </td>
 <td style="text-align:right;">
 0.4919590
@@ -361,6 +361,7 @@ RIOK1
 </tr>
 </tbody>
 </table>
+
 Visualizing the Screening Hits
 ==============================
 
