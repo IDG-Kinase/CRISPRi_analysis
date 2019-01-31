@@ -115,10 +115,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.7574514
+0.7421726
 </td>
 <td style="text-align:right;">
-0.9801789
+0.9820663
 </td>
 <td style="text-align:right;">
 0.4758460
@@ -129,10 +129,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8430363
+0.8447915
 </td>
 <td style="text-align:right;">
-1.0911738
+1.0944338
 </td>
 <td style="text-align:right;">
 0.5718818
@@ -479,6 +479,8 @@ WNK3
 </tr>
 </tbody>
 </table>
+.
+
 Genes with guides with 2-fold Increase in Adundance
 ===================================================
 
@@ -522,6 +524,8 @@ STK32C
 </tr>
 </tbody>
 </table>
+.
+
 Visualizing the Screening Hits
 ==============================
 

@@ -144,6 +144,7 @@ write_rds(dropout_hits,here('DK_SUM159_C7/dropout_hits.rds'))
 dropout_hits %>%
   kable(col.names = c("Gene Name","Number Sequences 2-Fold Decrease"))
 ```
+.
 
 # Genes with guides with 2-fold Increase in Adundance
 
@@ -156,6 +157,7 @@ dropin_hits = alignment_summary %>%
 dropin_hits %>%
   kable(col.names = c("Gene Name","Number Sequences 2-Fold Increase"))
 ```
+.
 
 # Visualizing the Screening Hits
 
