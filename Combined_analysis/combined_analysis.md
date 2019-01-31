@@ -21,6 +21,11 @@ for (this_file in dropout_hits[-1]) {
   all_dropout <- rbind(all_dropout, read_rds(this_file))
 }
 
+all_reads_summary = all_reads %>% 
+  filter(Day != 0) %>%
+  group_by(gene_name,Day,cell_line) %>%
+  summarise(D0_ratio_average = mean(D0_ratio))
+
 all_dropout_filt = all_dropout %>% filter(number_below_2fold >= 4)
 
 dropout_order = all_dropout_filt %>% 
@@ -87,7 +92,3 @@ ggplot(dropout_reads, aes(x=D0_ratio,y=exp_name, group=Name)) +
 ```
 
 ![](combined_analysis_files/figure-markdown_github/dropout_min_two-1.png)
-
-``` r
-ggsave(here('Combined_analysis/min2_below_2fold.svg'), height = 24,width=4)
-```

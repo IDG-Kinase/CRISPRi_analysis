@@ -11,6 +11,8 @@ library(boot)
 library(knitr)
 library(kableExtra)
 library(broom)
+
+knitr::opts_chunk$set(dev = c('png','svg'))
 ```
 
 Taking a look a the set of hits from the CRISPRi screen.
@@ -32,6 +34,11 @@ for (this_file in dropout_hits[-1]) {
   all_dropout <- rbind(all_dropout, read_rds(this_file))
 }
 
+all_reads_summary = all_reads %>% 
+  filter(Day != 0) %>%
+  group_by(gene_name,Day,cell_line) %>%
+  summarise(D0_ratio_average = mean(D0_ratio))
+
 all_dropout_filt = all_dropout %>% filter(number_below_2fold >= 4)
 
 dropout_order = all_dropout_filt %>% 
@@ -49,7 +56,7 @@ all_dropout_order = all_dropout %>%
 
 OK, looking at the guides where at least one of the cell lines has 4 guides past the 2-fold drop line, here is a figure that shows the performance of each guide in each of the experiments.
 
-```{r dropout_min_four, fig.height=6.5, width=4}
+```{r dropout_min_four, fig.height=6.5, fig.width=6}
 dropout_reads = all_reads %>% 
   filter(gene_name %in% unique(all_dropout_filt$gene_name), Day == 28) %>% 
   mutate(exp_name = paste0(cell_line,' C', clone)) %>%
@@ -70,9 +77,7 @@ ggplot(dropout_reads, aes(x=D0_ratio,y=exp_name, group=Name)) +
 
 The colors in each individual plot show a single guide sequence in all of the experiments. The genes are ordered by the average number of guide sequences below a 2-fold drop.
 
-```{r, echo=F}
-ggsave(here('Combined_analysis/min4_below_2fold.svg'), height = 6.5,width=4)
-```
+
 
 # Another Vis of the Dropout Percentages
 
@@ -95,5 +100,4 @@ ggplot(dropout_reads, aes(x=D0_ratio,y=exp_name, group=Name)) +
   theme(legend.position = "none") +
   labs(y="",x="Day 28/Day 0") +
   facet_grid(vars(gene_name))
-ggsave(here('Combined_analysis/min2_below_2fold.svg'), height = 24,width=4)
 ```
