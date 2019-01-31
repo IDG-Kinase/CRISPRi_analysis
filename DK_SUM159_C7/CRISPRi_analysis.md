@@ -115,10 +115,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.7473314
+0.7574514
 </td>
 <td style="text-align:right;">
-0.9826845
+0.9801789
 </td>
 <td style="text-align:right;">
 0.4758460
@@ -129,10 +129,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8477801
+0.8430363
 </td>
 <td style="text-align:right;">
-1.0945813
+1.0911738
 </td>
 <td style="text-align:right;">
 0.5718818
@@ -187,6 +187,7 @@ alignment_summary = alignments %>%
   group_by(gene_name,Day) %>%
   summarise(number_below_2fold = sum(D0_ratio < 0.5, na.rm=T),
             number_above_2fold = sum(D0_ratio > 2, na.rm=T),
+            average_ratio = mean(D0_ratio),
             p_val = tidy(wilcox.test(D0_ratio,non_target_counts$D0_ratio[non_target_counts$Day == 28]))$p.value)
 ```
 
@@ -478,11 +479,68 @@ WNK3
 </tr>
 </tbody>
 </table>
+Genes with guides with 2-fold Increase in Adundance
+===================================================
+
+``` r
+dropin_hits = alignment_summary %>% 
+  filter(number_above_2fold > 1) %>% 
+  arrange(desc(number_above_2fold)) %>% 
+  select(gene_name,number_above_2fold)
+
+dropin_hits %>%
+  kable(col.names = c("Gene Name","Number Sequences 2-Fold Increase"))
+```
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+Gene Name
+</th>
+<th style="text-align:right;">
+Number Sequences 2-Fold Increase
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+PSKH1
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+STK32C
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+</tbody>
+</table>
 Visualizing the Screening Hits
 ==============================
 
     ## Joining, by = "gene_name"
 
+    ## Joining, by = c("Day", "gene_name", "number_below_2fold")
+
     ## Warning: Removed 20 rows containing non-finite values (stat_bin).
 
 ![](CRISPRi_analysis_files/figure-markdown_github/alignment_hits_vis-1.png)
+
+This is the same plot as above, execept with log10 scale. Note that since some of the ratios are zero (reads at day 28 were zero), I had to add a "psuedo" ratio min value to make the log10 scale work.
+
+    ## Joining, by = "gene_name"
+
+    ## Joining, by = c("Day", "gene_name", "number_below_2fold")
+
+    ## Warning: Removed 20 rows containing non-finite values (stat_bin).
+
+    ## Warning: Removed 2 rows containing missing values (geom_bar).
+
+![](CRISPRi_analysis_files/figure-markdown_github/alignment_hits_vis_log10-1.png)
