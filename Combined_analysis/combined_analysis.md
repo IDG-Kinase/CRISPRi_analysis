@@ -39,6 +39,28 @@ all_dropout_order = all_dropout %>%
   arrange(desc(average_below))
 ```
 
+Non-targeting Visualization
+===========================
+
+``` r
+only_non_target = all_reads %>% 
+  filter(grepl('non-targeting',Name), Day==28)
+
+ggplot(only_non_target,aes(y=D0_ratio)) + 
+  geom_boxplot() + 
+  scale_y_continuous(breaks=seq(0.2,1.6,by=0.2)) +
+  labs(x="Non-targeting CRISPRi Sequences",y="Day 28/Day 0") + 
+  theme_berginski() +
+  theme(axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+```
+
+![](combined_analysis_files/figure-markdown_github/non-target_vis-1.png)
+
+``` r
+ggsave(here('Combined_analysis/non-target-ratios.png'), width=3,height=4)
+```
+
 Dropout CRISPRi Visualization
 =============================
 
@@ -55,7 +77,7 @@ dropout_reads$gene_name = factor(dropout_reads$gene_name, levels = dropout_order
 
 ggplot(dropout_reads, aes(x=D0_ratio,y=exp_name, group=Name)) + 
   geom_vline(xintercept=0.5, color='red', alpha=0.5,linetype=2) +
-  geom_path(aes(color=ID),alpha=0.75) +
+  geom_path(aes(color=ID),alpha=0.75,lwd=0.75) +
   theme_berginski() +
   xlim(c(0,2)) +
   theme(legend.position = "none") +
