@@ -15,7 +15,7 @@ library(gridExtra)
 
 source(here('shared_functions.R'))
 
-knitr::opts_chunk$set(dev = c('png','svg'))
+knitr::opts_chunk$set(dpi=600)
 ```
 
 Taking a look at the CRISPRi screen for the dark kinases in MDA MB 231 cells.
@@ -179,7 +179,11 @@ hit_vals = ggplot(alignment_hits) +
   theme_berginski() +
   labs(x="Day 28/Day 0 Ratio")
 
-ratio_hist = ggplot(alignments %>% filter(Day == 28)) + 
+#filter down to only Day 28 and remove the non-target sequences
+alignments_filtered = alignments %>%
+  filter(Day == 28, !grepl('non-target',Name))
+
+ratio_hist = ggplot(alignments_filtered) + 
   geom_histogram(aes(x=D0_ratio), breaks=seq(0,2,length=50)) + 
   geom_vline(xintercept=0.5,color='red',alpha=0.5) +
   annotate("text", x= 0.5,y=150,label="2-Fold Decrease", angle=90,hjust="right",vjust="bottom",color="red") +

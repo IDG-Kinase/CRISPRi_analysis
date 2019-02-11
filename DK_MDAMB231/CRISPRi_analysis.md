@@ -117,10 +117,10 @@ quantile.low
 14
 </td>
 <td style="text-align:right;">
-0.9396119
+0.9393190
 </td>
 <td style="text-align:right;">
-1.093562
+1.094859
 </td>
 <td style="text-align:right;">
 0.7843456
@@ -131,10 +131,10 @@ quantile.low
 28
 </td>
 <td style="text-align:right;">
-0.8096869
+0.8066673
 </td>
 <td style="text-align:right;">
-1.073628
+1.076427
 </td>
 <td style="text-align:right;">
 0.4919590
